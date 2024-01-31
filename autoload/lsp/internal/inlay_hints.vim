@@ -5,7 +5,9 @@ function! s:set_inlay_hints(data) abort
 
     call s:clear_inlay_hints()
 
-    if mode() !=# 'n' | return | endif
+	if mode() ==# 'i' && !s:has_inlay_hints_mode('force')
+		return
+	endif
 
     if lsp#client#is_error(a:data['response']) | return | endif
 
@@ -77,7 +79,7 @@ function! s:send_inlay_hints_request() abort
         return lsp#callbag#empty()
     endif
 
-    if s:has_inlay_hints_mode('curline')
+    if s:has_inlay_hints_mode('curline') && mode() !=# 'i'
         let l:range = lsp#utils#range#get_range_curline()
     else
         let l:range = lsp#utils#range#get_range()
