@@ -80,12 +80,16 @@ function! s:show_floating_window(event, managed_user_data) abort
     " Add detail field if provided.
     if type(get(l:completion_item, 'detail', v:null)) == type('')
         if !empty(l:completion_item.detail)
+            let current_ft = &filetype
+            if current_ft =~ '\.doxygen'
+                let cleaned_ft = substitute(current_ft, '\.doxygen\>', '', '')
+            endif
             let l:detail = s:MarkupContent.normalize({
-            \     'language': &filetype,
-            \     'value': l:completion_item['detail'],
-            \ }, {
-            \     'compact': !g:lsp_preview_fixup_conceal
-            \ })
+                \     'language': cleaned_ft,
+                \     'value': l:completion_item['detail'],
+                \ }, {
+                \     'compact': !g:lsp_preview_fixup_conceal
+                \ })
             let l:contents += [l:detail]
         endif
     endif
